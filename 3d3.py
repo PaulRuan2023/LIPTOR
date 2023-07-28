@@ -72,24 +72,13 @@ try:
             # 计算物体的三维坐标， 将图像中的像素坐标转换为世界坐标系下的三维空间坐标
             object_position = rs.rs2_deproject_pixel_to_point(intrinsics, [object_center_x, object_center_y], object_depth) 
 
-             # 计算物体的俯仰、偏摆和翻滚角度
-            object_pitch = np.arctan2(object_position[1], object_position[2])  # 俯仰角
-            object_yaw = np.arctan2(object_position[0], object_position[2])  # 偏摆角
-            object_roll = np.arctan2(y2 - y1, x2 - x1)  # 翻滚角
-            object_roll2 = np.arctan2(object_position[0], object_position[1])
-
-            # 计算物体的六自由度表示
-            object_6dof = np.array([object_position[0], object_position[1], object_position[2], object_pitch, object_yaw, object_roll2])
-
-            # 打印目标类别、置信度、深度信息、位置、欧拉角和六自由度
+            # 打印目标类别、置信度、深度信息和位置
             class_name = model.names[int(cls)]
-            print("目标：{}，置信度：{}，深度：{}，位置：{}，俯仰角：{}，偏摆角：{}，翻滚角：{}，a：{}，六自由度：{}".format(class_name, conf, object_depth, object_position, object_pitch, object_yaw, object_roll2, object_roll, object_6dof))
-
+            print("目标：{}，置信度：{}，深度：{}，位置：{}".format(class_name, conf, object_depth, object_position))
 
             # 绘制边界框和类别标签
             cv2.rectangle(color_image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
             cv2.putText(color_image, "{} {:.2f}".format(class_name, conf), (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
-
 
         # 显示检测结果
         cv2.imshow('RealSense YOLOv5', color_image)
@@ -100,3 +89,4 @@ finally:
     # 停止相机管道并关闭窗口
     pipeline.stop()
     cv2.destroyAllWindows()
+
